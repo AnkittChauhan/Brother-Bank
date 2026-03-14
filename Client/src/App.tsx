@@ -1,12 +1,8 @@
 
+import LoginPage from "@/components/LoginPage"
+
 function App() {
-
-
-  return (
-    <>
-      <h1 className="text-5xl text-purple-500 font-bold underline">Hello World</h1>
-    </>
-  )
+  return <LoginPage />
 }
 
 export default App
