@@ -1,51 +1,131 @@
-import { LogIn } from "lucide-react"
+import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/clerk-react";
+import { Link, useNavigate } from "react-router-dom";
+import { FileText, Shield, ArrowRight, Landmark } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+const LoginPage = () => {
+    const { isSignedIn, user } = useUser();
+    const navigate = useNavigate();
 
-export default function LoginPage() {
-  return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.14),_transparent_32%),linear-gradient(180deg,_#f8fbff_0%,_#eef4ff_52%,_#e3ecfb_100%)] px-6 py-10 md:px-10 md:py-14">
-      <section className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-4xl items-center justify-center rounded-[2rem] border border-white/70 bg-white/90 px-6 py-12 shadow-[0_28px_90px_-40px_rgba(15,23,42,0.35)] backdrop-blur sm:px-10">
-        <div className="flex w-full max-w-xl flex-col items-center text-center">
-          <div className="mb-10 flex size-28 items-center justify-center rounded-full bg-[#dceaff] shadow-[0_16px_40px_-24px_rgba(37,99,235,0.6)]">
-            <span className="text-5xl" aria-hidden="true">
-              ⏰
-            </span>
-          </div>
+    const handleAdminLogin = () => {
+        localStorage.setItem("isAdminLoggedIn", "true");
+        navigate("/admin");
+    };
 
-          <div className="space-y-3">
-            <h1 className="text-5xl font-semibold tracking-[-0.04em] text-slate-800 sm:text-6xl">
-              Shift Tracker
-            </h1>
-            <p className="text-xl text-slate-500 sm:text-2xl">
-              Manage your shifts efficiently
-            </p>
-          </div>
+    const handleUserApply = () => {
+        localStorage.setItem("isAdminLoggedIn", "false");
+        navigate("/apply");
+    };
 
-          <div className="mt-16 space-y-4">
-            <h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-800 sm:text-5xl">
-              Welcome Back
-            </h2>
-            <p className="text-xl text-slate-500 sm:text-2xl">
-              Please sign in to access your dashboard
-            </p>
-          </div>
+    return (
+        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+            <div className="flex flex-col md:flex-row gap-8 max-w-5xl w-full items-stretch justify-center">
+                {/* Left: Auth / User Card */}
+                <div className="w-full max-w-md flex flex-col">
+                    <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 h-full flex flex-col justify-center transform transition-all duration-300 hover:shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]">
+                        {/* Logo */}
+                        <div className="text-center mb-8">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg shadow-blue-200">
+                                <Landmark className="w-10 h-10 text-white" />
+                            </div>
+                            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                                Brother <span className="text-blue-600">Bank</span>
+                            </h1>
+                            <p className="text-gray-500 text-sm">
+                                Loan Management System / ऋण प्रबंधन प्रणाली
+                            </p>
+                        </div>
 
-          <Button
-            size="lg"
-            className="mt-12 h-18 w-full rounded-3xl bg-[#2563eb] px-6 text-2xl font-semibold text-white shadow-[0_20px_35px_-22px_rgba(37,99,235,0.9)] hover:bg-[#1d4ed8]"
-          >
-            <LogIn className="size-7" />
-            Sign in
-          </Button>
+                        {/* Welcome */}
+                        <div className="text-center mb-8">
+                            {isSignedIn ? (
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-semibold text-gray-800">
+                                        Welcome,{" "}
+                                        <span className="text-blue-600">{user.firstName}</span>!
+                                    </h2>
+                                    <p className="text-gray-500">
+                                        Choose an option below to continue
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-semibold text-gray-800">
+                                        Welcome Back
+                                    </h2>
+                                    <p className="text-gray-500">
+                                        Please sign in to access your dashboard
+                                    </p>
+                                </div>
+                            )}
+                        </div>
 
-          <div className="mt-12 h-px w-full bg-slate-200" />
+                        {/* Actions */}
+                        <div className="space-y-3">
+                            <SignedOut>
+                                <SignInButton mode="modal">
+                                    <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-2 group">
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        Sign In to Continue
+                                    </button>
+                                </SignInButton>
+                            </SignedOut>
 
-          <p className="mt-10 text-lg text-slate-400 sm:text-xl">
-            Secure authentication powered by Clerk
-          </p>
+                            <SignedIn>
+                                <button
+                                    onClick={handleUserApply}
+                                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-3 group"
+                                >
+                                    <FileText className="w-5 h-5" />
+                                    Apply for Loan
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </SignedIn>
+                        </div>
+
+                        <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+                            <p className="text-xs text-gray-400">
+                                Secure authentication powered by Clerk
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right: Admin Card */}
+                <SignedIn>
+                    <div className="w-full max-w-md flex flex-col">
+                        <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 h-full flex flex-col justify-center transform transition-all duration-300 hover:shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]">
+                            <div className="text-center mb-8">
+                                <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl mb-6 shadow-lg shadow-slate-300">
+                                    <Shield className="w-10 h-10 text-white" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                                    Admin Panel
+                                </h2>
+                                <p className="text-gray-500 text-sm">
+                                    View and manage all loan applications
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={handleAdminLogin}
+                                className="w-full bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-slate-300 transition-all duration-300 flex items-center justify-center gap-3 group"
+                            >
+                                <Shield className="w-5 h-5" />
+                                Enter Admin Dashboard
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </button>
+
+                            <div className="mt-6 text-center">
+                                <p className="text-xs text-gray-400">
+                                    Admin access to review all submitted applications
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </SignedIn>
+            </div>
         </div>
-      </section>
-    </main>
-  )
-}
+    );
+};
+
+export default LoginPage;
