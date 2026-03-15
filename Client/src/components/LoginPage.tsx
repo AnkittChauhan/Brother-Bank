@@ -1,6 +1,7 @@
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/clerk-react";
 import { Link, useNavigate } from "react-router-dom";
 import { FileText, Shield, ArrowRight, Landmark } from "lucide-react";
+import AdminPanel from "./AdminPanel";
 
 const LoginPage = () => {
     const { isSignedIn, user } = useUser();
@@ -90,8 +91,14 @@ const LoginPage = () => {
                     </div>
                 </div>
 
+
+
+                {user?.primaryEmailAddress?.emailAddress == 'ankittrajput.4@gmail.com' && <AdminPanel />}
+
+
+
                 {/* Right: Admin Card */}
-                <SignedIn>
+                {/* <SignedIn>
                     <div className="w-full max-w-md flex flex-col">
                         <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 h-full flex flex-col justify-center transform transition-all duration-300 hover:shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]">
                             <div className="text-center mb-8">
@@ -122,7 +129,7 @@ const LoginPage = () => {
                             </div>
                         </div>
                     </div>
-                </SignedIn>
+                </SignedIn> */}
             </div>
         </div>
     );
