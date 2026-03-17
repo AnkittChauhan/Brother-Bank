@@ -82,6 +82,24 @@ router.get('/', async (req, res) => {
     }
 });
 
+// GET /api/loans/my?userId=<clerkUserId> — get current user's loans
+router.get('/my', async (req, res) => {
+    try {
+        const { userId } = req.query;
+
+        if (!userId) {
+            return res.status(400).json({ error: 'userId query parameter is required' });
+        }
+
+        const loans = await Loan.find({ clerkUserId: userId }).sort({ createdAt: -1 });
+        res.json(loans);
+    } catch (err) {
+        console.error('Fetch my loans error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+module.exports = router;
 // PATCH /api/loans/:id/status — approve or reject a loan
 router.patch('/:id/status', async (req, res) => {
     try {

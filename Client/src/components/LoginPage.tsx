@@ -1,20 +1,20 @@
 import { SignedIn, SignedOut, SignInButton, useUser } from "@clerk/clerk-react";
-import { Link, useNavigate } from "react-router-dom";
-import { FileText, Shield, ArrowRight, Landmark } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { FileText, Receipt, ArrowRight, Landmark } from "lucide-react";
 import AdminPanel from "./AdminPanel";
 
 const LoginPage = () => {
     const { isSignedIn, user } = useUser();
     const navigate = useNavigate();
 
-    const handleAdminLogin = () => {
-        localStorage.setItem("isAdminLoggedIn", "true");
-        navigate("/admin");
-    };
-
     const handleUserApply = () => {
         localStorage.setItem("isAdminLoggedIn", "false");
         navigate("/apply");
+    };
+
+    const handleMyLoans = () => {
+        localStorage.setItem("isAdminLoggedIn", "false");
+        navigate("/my-loans");
     };
 
     return (
@@ -72,14 +72,25 @@ const LoginPage = () => {
                             </SignedOut>
 
                             <SignedIn>
-                                <button
-                                    onClick={handleUserApply}
-                                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-3 group"
-                                >
-                                    <FileText className="w-5 h-5" />
-                                    Apply for Loan
-                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                </button>
+                                <div className="grid grid-cols-1 gap-3">
+                                    <button
+                                        onClick={handleUserApply}
+                                        className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-blue-200 transition-all duration-300 flex items-center justify-center gap-2 group"
+                                    >
+                                        <FileText className="w-5 h-5" />
+                                        Apply for Loan
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                    </button>
+
+                                    <button
+                                        onClick={handleMyLoans}
+                                        className="w-full bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-200 transition-all duration-300 flex items-center justify-center gap-2 group"
+                                    >
+                                        <Receipt className="w-5 h-5" />
+                                        My Loans
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                    </button>
+                                </div>
                             </SignedIn>
                         </div>
 

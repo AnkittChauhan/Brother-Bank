@@ -1,5 +1,4 @@
-import React from 'react'
-import { SignedIn, useUser } from "@clerk/clerk-react";
+import { SignedIn } from "@clerk/clerk-react";
 import { Shield, ArrowRight, } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +20,7 @@ const AdminPanel = () => {
                 <div className="w-full max-w-md flex flex-col">
                     <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100 h-full flex flex-col justify-center transform transition-all duration-300 hover:shadow-[0_20px_60px_-12px_rgba(0,0,0,0.15)]">
                         <div className="text-center mb-8">
-                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-slate-700 to-slate-900 rounded-2xl mb-6 shadow-lg shadow-slate-300">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-linear-to-br from-slate-700 to-slate-900 rounded-2xl mb-6 shadow-lg shadow-slate-300">
                                 <Shield className="w-10 h-10 text-white" />
                             </div>
                             <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -34,7 +33,7 @@ const AdminPanel = () => {
 
                         <button
                             onClick={handleAdminLogin}
-                            className="w-full bg-gradient-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-slate-300 transition-all duration-300 flex items-center justify-center gap-3 group"
+                            className="w-full bg-linear-to-r from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg shadow-slate-300 transition-all duration-300 flex items-center justify-center gap-3 group"
                         >
                             <Shield className="w-5 h-5" />
                             Enter Admin Dashboard

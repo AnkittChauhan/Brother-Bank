@@ -4,6 +4,7 @@ import LoginPage from "@/components/LoginPage";
 import LoanApplicationForm from "@/components/LoanApplicationForm";
 import AdminDashboard from "@/components/AdminDashboard";
 import Navbar from "@/components/Navbar";
+import MyLoans from "@/components/MyLoans";
 
 function App() {
   return (
@@ -32,6 +33,19 @@ function App() {
             <>
               <SignedIn>
                 <AdminDashboard />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          }
+        />
+        <Route
+          path="/my-loans"
+          element={
+            <>
+              <SignedIn>
+                <MyLoans />
               </SignedIn>
               <SignedOut>
                 <RedirectToSignIn />
