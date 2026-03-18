@@ -99,7 +99,40 @@ router.get('/my', async (req, res) => {
     }
 });
 
-module.exports = router;
+// PATCH /api/loans/:id/financials — update interest and dueAmount (admin)
+router.patch('/:id/financials', async (req, res) => {
+    try {
+        const { interest, dueAmount } = req.body;
+
+        if (interest == null || dueAmount == null) {
+            return res.status(400).json({ error: 'interest and dueAmount are required' });
+        }
+
+        const interestNum = Number(interest);
+        const dueAmountNum = Number(dueAmount);
+
+        if (Number.isNaN(interestNum) || Number.isNaN(dueAmountNum)) {
+            return res.status(400).json({ error: 'interest and dueAmount must be numeric' });
+        }
+
+        if (interestNum < 0) return res.status(400).json({ error: 'interest cannot be negative' });
+        if (dueAmountNum <= 0) return res.status(400).json({ error: 'dueAmount must be greater than 0' });
+
+        const loan = await Loan.findByIdAndUpdate(
+            req.params.id,
+            { interest: interestNum, dueAmount: dueAmountNum },
+            { new: true }
+        );
+
+        if (!loan) return res.status(404).json({ error: 'Loan not found' });
+
+        res.json({ message: 'Financials updated', loan });
+    } catch (err) {
+        console.error('Financials update error:', err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // PATCH /api/loans/:id/status — approve or reject a loan
 router.patch('/:id/status', async (req, res) => {
     try {

@@ -35,6 +35,9 @@ const AdminDashboard = () => {
     const [error, setError] = useState('');
     const [viewImage, setViewImage] = useState<string | null>(null);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [draftInterest, setDraftInterest] = useState<string>('');
+    const [draftDueAmount, setDraftDueAmount] = useState<string>('');
     const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
     const fetchLoans = async () => {
@@ -69,6 +72,43 @@ const AdminDashboard = () => {
         }
     };
 
+    const startEditFinancials = (loan: Loan) => {
+        setEditingId(loan._id);
+        setDraftInterest(String(loan.interest));
+        setDraftDueAmount(String(loan.dueAmount));
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setDraftInterest('');
+        setDraftDueAmount('');
+    };
+
+    const saveFinancials = async (id: string) => {
+        const interestNum = Number(draftInterest);
+        const dueNum = Number(draftDueAmount);
+        if (Number.isNaN(interestNum) || Number.isNaN(dueNum) || interestNum < 0 || dueNum <= 0) {
+            alert('Please enter valid numeric values: interest >= 0 and due amount > 0');
+            return;
+        }
+
+        setUpdatingId(id);
+        try {
+            const { data } = await axios.patch(`${API_URL}/api/loans/${id}/financials`, { interest: interestNum, dueAmount: dueNum });
+            // update local list
+            setLoans(prev => prev.map(l => l._id === id ? { ...l, interest: data.loan.interest, dueAmount: data.loan.dueAmount } : l));
+            cancelEdit();
+        } catch (err: unknown) {
+            console.error('Failed to update financials:', err);
+            const message = axios.isAxiosError(err) && err.response?.data?.error 
+                ? err.response.data.error 
+                : 'Failed to update financials (make sure backend server was restarted)';
+            alert(message);
+        } finally {
+            setUpdatingId(null);
+        }
+    };
+
     const filtered = filter === 'all' ? loans : loans.filter(l => l.status === filter);
     const stats = {
         total: loans.length,
@@ -80,14 +120,14 @@ const AdminDashboard = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+            <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-blue-50">
                 <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
             {/* Image Modal */}
             {viewImage && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => setViewImage(null)}>
@@ -223,11 +263,33 @@ const AdminDashboard = () => {
                                             </div>
                                             <div className="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
                                                 <p className="text-xs text-indigo-500 mb-0.5">Interest</p>
-                                                <p className="text-lg font-bold text-indigo-700">{loan.interest}%</p>
+                                                {editingId === loan._id ? (
+                                                    <input
+                                                        type="number"
+                                                        step="0.1"
+                                                        min="0"
+                                                        value={draftInterest}
+                                                        onChange={e => setDraftInterest(e.target.value)}
+                                                        className="w-full px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-lg font-bold outline-none"
+                                                    />
+                                                ) : (
+                                                    <p className="text-lg font-bold text-indigo-700">{loan.interest}%</p>
+                                                )}
                                             </div>
                                             <div className="max-md:col-span-2 bg-green-50 rounded-xl p-3 border border-green-100">
                                                 <p className="text-xs text-green-500 mb-0.5">Due Amount</p>
-                                                <p className="text-lg font-bold text-green-700">₹{loan.dueAmount.toLocaleString()}</p>
+                                                {editingId === loan._id ? (
+                                                    <input
+                                                        type="number"
+                                                        step="0.01"
+                                                        min="0"
+                                                        value={draftDueAmount}
+                                                        onChange={e => setDraftDueAmount(e.target.value)}
+                                                        className="w-full px-3 py-2 rounded-xl border border-green-200 bg-green-50 text-green-700 text-lg font-bold outline-none"
+                                                    />
+                                                ) : (
+                                                    <p className="text-lg font-bold text-green-700">₹{loan.dueAmount.toLocaleString()}</p>
+                                                )}
                                             </div>
                                         </div>
 
@@ -241,13 +303,40 @@ const AdminDashboard = () => {
                                             </button>
                                         </div>
 
+                                            {/* Financials edit controls */}
+                                            <div className="mb-4">
+                                                {editingId === loan._id ? (
+                                                    <div className="flex items-center gap-3">
+                                                        <button
+                                                            onClick={() => saveFinancials(loan._id)}
+                                                            disabled={updatingId === loan._id}
+                                                            className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 shadow-sm disabled:opacity-50"
+                                                        >
+                                                            {updatingId === loan._id ? 'Saving...' : 'Save'}
+                                                        </button>
+                                                        <button
+                                                            onClick={cancelEdit}
+                                                            className="px-4 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div>
+                                                        <button onClick={() => startEditFinancials(loan)} className="px-3 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 text-sm">
+                                                            Edit Financials
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+
                                         {/* Actions */}
                                         {loan.status === 'pending' && (
                                             <div className="flex gap-3 pt-4 border-t border-gray-100">
                                                 <button
                                                     onClick={() => updateStatus(loan._id, 'approved')}
                                                     disabled={updatingId === loan._id}
-                                                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-green-200 transition-all disabled:opacity-50"
+                                                    className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-green-200 transition-all disabled:opacity-50"
                                                 >
                                                     {updatingId === loan._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                                                     Approve
@@ -255,7 +344,7 @@ const AdminDashboard = () => {
                                                 <button
                                                     onClick={() => updateStatus(loan._id, 'rejected')}
                                                     disabled={updatingId === loan._id}
-                                                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-red-200 transition-all disabled:opacity-50"
+                                                    className="flex-1 flex items-center justify-center gap-2 bg-linear-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-red-200 transition-all disabled:opacity-50"
                                                 >
                                                     {updatingId === loan._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
                                                     Reject
