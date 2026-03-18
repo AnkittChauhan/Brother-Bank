@@ -103,8 +103,12 @@ const LoginPage = () => {
                 </div>
 
 
-
-                {user?.primaryEmailAddress?.emailAddress == import.meta.env.VITE_ADMIN_EMAIL && <AdminPanel />}
+                {/* // added admin check */}
+                { 
+                    user?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() === 
+                    import.meta.env.VITE_ADMIN_EMAIL?.trim().toLowerCase() && <AdminPanel />
+                    
+                }
 
 
 
