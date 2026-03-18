@@ -70,7 +70,7 @@ const MyLoans = () => {
         const { data } = await axios.get(`${API_URL}/api/loans/my`, {
           params: { userId: user.id },
         });
-        setLoans(data);
+        setLoans(data.filter((loan: Loan) => loan.status === 'approved'));
       } catch (err: unknown) {
         const message = axios.isAxiosError(err)
           ? err.response?.data?.error || 'Failed to fetch your loans. Please try again.'
@@ -132,8 +132,8 @@ const MyLoans = () => {
         {loans.length === 0 && !error ? (
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 text-center space-y-4">
             <Receipt className="w-10 h-10 text-gray-300 mx-auto" />
-            <h2 className="text-xl font-semibold text-gray-700">No loan applications yet</h2>
-            <p className="text-sm text-gray-500">You haven’t applied for a loan yet. Start your first application now.</p>
+            <h2 className="text-xl font-semibold text-gray-700">No approved loans yet</h2>
+            <p className="text-sm text-gray-500">Only approved loans are shown here. You can apply for a new loan anytime.</p>
             <Link
               to="/apply"
               className="inline-flex items-center justify-center bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold py-2.5 px-5 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-200"
