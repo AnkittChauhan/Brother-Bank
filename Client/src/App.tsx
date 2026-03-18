@@ -5,10 +5,12 @@ import LoanApplicationForm from "@/components/LoanApplicationForm";
 import AdminDashboard from "@/components/AdminDashboard";
 import Navbar from "@/components/Navbar";
 import MyLoans from "@/components/MyLoans";
+import { Toaster } from "@/components/ui/sonner"
 
 function App() {
   return (
     <Router>
+      <Toaster />
       <SignedIn>
         <Navbar />
       </SignedIn>

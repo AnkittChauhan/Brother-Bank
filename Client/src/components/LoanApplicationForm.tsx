@@ -3,6 +3,7 @@ import { useUser, useAuth } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, Upload, FileCheck, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -147,11 +148,12 @@ const LoanApplicationForm = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+            toast.success('Application submitted successfully!' , { position: "top-center" } );
             setSubmitSuccess(true);
         } catch (err: any) {
             const msg = err.response?.data?.error || err.response?.data?.details?.join(', ') || 'Failed to submit application';
             setSubmitError(msg);
+                toast.error(msg);
         } finally {
             setIsSubmitting(false);
         }
@@ -425,6 +427,7 @@ const LoanApplicationForm = () => {
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
                             <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
                             <p className="text-sm text-red-700">{submitError}</p>
+                            { toast.error(submitError) }
                         </div>
                     )}
 

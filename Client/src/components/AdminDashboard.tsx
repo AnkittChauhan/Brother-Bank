@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from "sonner"
 import { ArrowLeft, CheckCircle, XCircle, Clock, Eye, X, Users, IndianRupee, AlertTriangle, Loader2 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -67,6 +68,7 @@ const AdminDashboard = () => {
             setLoans(prev => prev.map(l => l._id === id ? { ...l, status } : l));
         } catch (err) {
             console.error('Status update failed:', err);
+            toast.error(`'Status update failed:' ${err}`)
         } finally {
             setUpdatingId(null);
         }
@@ -88,7 +90,8 @@ const AdminDashboard = () => {
         const interestNum = Number(draftInterest);
         const dueNum = Number(draftDueAmount);
         if (Number.isNaN(interestNum) || Number.isNaN(dueNum) || interestNum < 0 || dueNum <= 0) {
-            alert('Please enter valid numeric values: interest >= 0 and due amount > 0');
+            // alert('Please enter valid numeric values: interest >= 0 and due amount > 0');
+            toast.warning('Please enter valid numeric values: interest >= 0 and due amount > 0')
             return;
         }
 
@@ -103,7 +106,8 @@ const AdminDashboard = () => {
             const message = axios.isAxiosError(err) && err.response?.data?.error 
                 ? err.response.data.error 
                 : 'Failed to update financials (make sure backend server was restarted)';
-            alert(message);
+            // alert(message);
+            toast.error(message);
         } finally {
             setUpdatingId(null);
         }
@@ -205,7 +209,7 @@ const AdminDashboard = () => {
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
                         <AlertTriangle className="w-5 h-5 text-red-500" />
-                        <p className="text-sm text-red-700">{error}</p>
+                        <p className="text-sm text-red-700">{error}</p>s
                     </div>
                 )}
 
