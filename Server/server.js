@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadsDir)) {
 
 // middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://brother-bank-sage.vercel.app'],
     credentials: true
 }));
 app.use(express.json());
