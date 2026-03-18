@@ -104,7 +104,7 @@ const LoginPage = () => {
 
 
 
-                {user?.primaryEmailAddress?.emailAddress == 'ankittrajput.4@gmail.com' && <AdminPanel />}
+                {user?.primaryEmailAddress?.emailAddress == import.meta.env.VITE_ADMIN_EMAIL && <AdminPanel />}
 
 
 
