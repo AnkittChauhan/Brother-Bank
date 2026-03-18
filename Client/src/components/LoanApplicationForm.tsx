@@ -277,7 +277,7 @@ const LoanApplicationForm = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                    Giving Money (₹) / दी जाने वाली राशि <span className="text-red-500">*</span>
+                                    Loan Money (₹) / दी जाने वाली राशि <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"

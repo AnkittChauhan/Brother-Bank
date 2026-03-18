@@ -119,7 +119,8 @@ const AdminDashboard = () => {
         pending: loans.filter(l => l.status === 'pending').length,
         approved: loans.filter(l => l.status === 'approved').length,
         rejected: loans.filter(l => l.status === 'rejected').length,
-        totalAmount: loans.reduce((s, l) => s + l.givingMoney, 0),
+        // totalAmount: approved.reduce((s, l) => s + l.givingMoney, 0),
+        totalAmount: loans.filter(l => l.status === 'approved').reduce((s, l) => s + l.givingMoney, 0),
     };
 
     if (loading) {
@@ -209,7 +210,7 @@ const AdminDashboard = () => {
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
                         <AlertTriangle className="w-5 h-5 text-red-500" />
-                        <p className="text-sm text-red-700">{error}</p>s
+                        <p className="text-sm text-red-700">{error}</p>
                     </div>
                 )}
 
