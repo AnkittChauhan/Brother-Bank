@@ -41,8 +41,8 @@ const AdminDashboard = () => {
         try {
             const { data } = await axios.get(`${API_URL}/api/loans`);
             setLoans(data);
-        } catch (err) {
-            setError('Failed to fetch loan applications');
+        } catch (error) {
+            setError('Failed to fetch loan applications'+ error);
         } finally {
             setLoading(false);
         }
@@ -216,16 +216,16 @@ const AdminDashboard = () => {
                                         </div>
 
                                         {/* Money Details */}
-                                        <div className="grid grid-cols-3 gap-4 mb-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                                             <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                                <p className="text-xs text-blue-500 mb-0.5">Giving Money</p>
+                                                <p className="text-xs text-blue-500 mb-0.5">Loan Amount</p>
                                                 <p className="text-lg font-bold text-blue-700">₹{loan.givingMoney.toLocaleString()}</p>
                                             </div>
                                             <div className="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
                                                 <p className="text-xs text-indigo-500 mb-0.5">Interest</p>
                                                 <p className="text-lg font-bold text-indigo-700">{loan.interest}%</p>
                                             </div>
-                                            <div className="bg-green-50 rounded-xl p-3 border border-green-100">
+                                            <div className="max-md:col-span-2 bg-green-50 rounded-xl p-3 border border-green-100">
                                                 <p className="text-xs text-green-500 mb-0.5">Due Amount</p>
                                                 <p className="text-lg font-bold text-green-700">₹{loan.dueAmount.toLocaleString()}</p>
                                             </div>
