@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/sonner"
 function App() {
   return (
     <Router>
-      <Toaster />
+      <Toaster position="top-center" expand={false} richColors theme="light"/>
       <SignedIn>
         <Navbar />
       </SignedIn>

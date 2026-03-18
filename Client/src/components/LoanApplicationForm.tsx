@@ -148,7 +148,7 @@ const LoanApplicationForm = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            toast.success('Application submitted successfully!' , { position: "top-center" } );
+            toast.success('Application submitted successfully!');
             setSubmitSuccess(true);
         } catch (err: any) {
             const msg = err.response?.data?.error || err.response?.data?.details?.join(', ') || 'Failed to submit application';
