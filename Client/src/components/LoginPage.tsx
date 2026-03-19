@@ -17,6 +17,11 @@ const LoginPage = () => {
         navigate("/my-loans");
     };
 
+    // role check ( if admin or not )
+    const role = user?.publicMetadata?.role;
+
+    const isAdmin = role === "admin";
+
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
             <div className="flex flex-col md:flex-row gap-8 max-w-5xl w-full items-stretch justify-center">
@@ -104,11 +109,17 @@ const LoginPage = () => {
 
 
                 {/* // added admin check */}
-                { 
+
+
+                {isAdmin && <AdminPanel />}
+
+                {/* Old single admin handling logic */}
+
+                {/* { 
                     user?.primaryEmailAddress?.emailAddress?.trim().toLowerCase() === 
                     import.meta.env.VITE_ADMIN_EMAIL?.trim().toLowerCase() && <AdminPanel />
                     
-                }
+                } */}
 
 
 
