@@ -106,7 +106,7 @@ const MyLoans = () => {
             >
               <X className="w-5 h-5 text-gray-600" />
             </button>
-            <img src={`${API_URL}${viewImage}`} alt="Uploaded document" className="w-full rounded-2xl shadow-2xl" />
+            <img src={viewImage} alt="Uploaded document" className="w-full rounded-2xl shadow-2xl" />
           </div>
         </div>
       )}
