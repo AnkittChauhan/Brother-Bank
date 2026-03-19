@@ -14,6 +14,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react';
+import { getImageUrl } from '../lib/imageUrl';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -106,7 +107,7 @@ const MyLoans = () => {
             >
               <X className="w-5 h-5 text-gray-600" />
             </button>
-            <img src={viewImage} alt="Uploaded document" className="w-full rounded-2xl shadow-2xl" />
+            <img src={getImageUrl(viewImage, API_URL)} alt="Uploaded document" className="w-full rounded-2xl shadow-2xl" />
           </div>
         </div>
       )}
@@ -187,13 +188,13 @@ const MyLoans = () => {
 
                   <div className="flex flex-wrap gap-3">
                     <button
-                      onClick={() => setViewImage(loan.signature)}
+                      onClick={() => setViewImage(getImageUrl(loan.signature, API_URL))}
                       className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm text-gray-600"
                     >
                       <Eye className="w-4 h-4" /> View Signature
                     </button>
                     <button
-                      onClick={() => setViewImage(loan.documentPhoto)}
+                      onClick={() => setViewImage(getImageUrl(loan.documentPhoto, API_URL))}
                       className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all text-sm text-gray-600"
                     >
                       <Eye className="w-4 h-4" /> View Document

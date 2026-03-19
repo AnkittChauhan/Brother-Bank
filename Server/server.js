@@ -2,19 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
+const multer = require('multer');
 const { initClerk } = require('./middleware/auth');
 const loanRoutes = require('./routes/loans');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 // middleware
 app.use(cors({
@@ -25,11 +18,34 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(initClerk);
 
-// serve uploaded files statically
-app.use('/uploads', express.static(uploadsDir));
-
 // routes
 app.use('/api/loans', loanRoutes);
+
+// upload-related error handler
+app.use((err, req, res, next) => {
+    if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({
+                success: false,
+                message: 'File size exceeds 2MB limit.'
+            });
+        }
+
+        return res.status(400).json({
+            success: false,
+            message: err.message
+        });
+    }
+
+    if (err?.message?.includes('Only image files')) {
+        return res.status(400).json({
+            success: false,
+            message: err.message
+        });
+    }
+
+    next(err);
+});
 
 // health check
 app.get('/api/health', (req, res) => {
