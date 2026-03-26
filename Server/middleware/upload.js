@@ -3,7 +3,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 
 const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_FILE_SIZE = 7 * 1024 * 1024; // 7 max upload image size
 
 const fileFilter = (req, file, cb) => {
     if (!allowedMimeTypes.includes(file.mimetype)) {

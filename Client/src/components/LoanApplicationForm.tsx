@@ -339,7 +339,7 @@ const LoanApplicationForm = () => {
                                         <div className="space-y-2 py-2">
                                             <Upload className="w-8 h-8 text-gray-400 mx-auto" />
                                             <p className="text-sm text-gray-500">Upload signature image</p>
-                                            <p className="text-xs text-gray-400">JPG, PNG or WebP (max 5MB)</p>
+                                            <p className="text-xs text-gray-400">JPG, PNG or WebP (max 7MB)</p>
                                         </div>
                                     )}
                                 </label>
@@ -364,7 +364,7 @@ const LoanApplicationForm = () => {
                                         <div className="space-y-2 py-4">
                                             <Upload className="w-10 h-10 text-gray-400 mx-auto" />
                                             <p className="text-sm text-gray-500">Click to upload document photo</p>
-                                            <p className="text-xs text-gray-400">JPG, PNG or WebP (max 5MB)</p>
+                                            <p className="text-xs text-gray-400">JPG, PNG or WebP (max 7MB)</p>
                                         </div>
                                     )}
                                 </label>
