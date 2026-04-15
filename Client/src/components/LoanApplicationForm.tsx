@@ -34,8 +34,8 @@ interface FormData {
     fatherName: string;
     motherName: string;
     dob: string;
-    givingMoney: string;
-    interest: string;
+    givingMoney: number;
+    interest: number;
     termsAccepted: boolean;
 }
 
@@ -53,8 +53,8 @@ const LoanApplicationForm = () => {
         fatherName: '',
         motherName: '',
         dob: '',
-        givingMoney: '',
-        interest: '',
+        givingMoney: 0,
+        interest: 0,
         termsAccepted: false,
     });
     const [documentPhoto, setDocumentPhoto] = useState<File | null>(null);
@@ -67,15 +67,14 @@ const LoanApplicationForm = () => {
     const [submitError, setSubmitError] = useState('');
     const [termsLang, setTermsLang] = useState<'en' | 'hi'>('en');
 
-    const dueAmount = formData.givingMoney && formData.interest
-        ? (parseFloat(formData.givingMoney) + parseFloat(formData.givingMoney) * parseFloat(formData.interest) / 100).toFixed(2)
-        : '0.00';
+    const dueAmount = formData.givingMoney + formData.interest;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
+        const isNumericField = name === 'givingMoney' || name === 'interest';
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value,
+            [name]: type === 'checkbox' ? checked : isNumericField ? Number(value) : value,
         }));
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
@@ -112,8 +111,8 @@ const LoanApplicationForm = () => {
         if (!formData.fatherName.trim()) newErrors.fatherName = 'Father name is required';
         if (!formData.motherName.trim()) newErrors.motherName = 'Mother name is required';
         if (!formData.dob) newErrors.dob = 'Date of birth is required';
-        if (!formData.givingMoney || parseFloat(formData.givingMoney) <= 0) newErrors.givingMoney = 'Valid amount is required';
-        if (!formData.interest || parseFloat(formData.interest) < 0) newErrors.interest = 'Valid interest rate is required';
+        if (!formData.givingMoney || formData.givingMoney <= 0) newErrors.givingMoney = 'Valid amount is required';
+        if (formData.interest < 0) newErrors.interest = 'Valid interest amount is required';
         if (!documentPhoto) newErrors.documentPhoto = 'Document photo is required';
         if (!signature) newErrors.signature = 'Signature is required';
         if (!formData.termsAccepted) newErrors.termsAccepted = 'You must accept the terms';
@@ -134,8 +133,8 @@ const LoanApplicationForm = () => {
             data.append('fatherName', formData.fatherName);
             data.append('motherName', formData.motherName);
             data.append('dob', formData.dob);
-            data.append('givingMoney', formData.givingMoney);
-            data.append('interest', formData.interest);
+            data.append('givingMoney', String(formData.givingMoney));
+            data.append('interest', String(formData.interest));
             data.append('termsAccepted', 'true');
             data.append('email', user?.primaryEmailAddress?.emailAddress || '');
             data.append('clerkUserId', user?.id || '');
@@ -292,14 +291,14 @@ const LoanApplicationForm = () => {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                                    Interest (%) / ब्याज दर <span className="text-red-500">*</span>
+                                    Interest (₹) / ब्याज राशि <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="number"
                                     name="interest"
                                     value={formData.interest}
                                     onChange={handleChange}
-                                    placeholder="e.g. 10"
+                                    placeholder="e.g. 5000"
                                     min="0"
                                     step="0.1"
                                     className={`w-full px-4 py-3 rounded-xl border ${errors.interest ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'} focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all`}
@@ -311,7 +310,7 @@ const LoanApplicationForm = () => {
                         {/* Due Amount */}
                         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                             <p className="text-sm text-gray-500 mb-1">Due Amount / देय राशि</p>
-                            <p className="text-3xl font-bold text-blue-700">₹{dueAmount}</p>
+                            <p className="text-3xl font-bold text-blue-700">₹{dueAmount.toLocaleString('en-IN')}</p>
                             <p className="text-xs text-gray-400 mt-1">Principal + Interest / मूलधन + ब्याज</p>
                         </div>
                     </div>

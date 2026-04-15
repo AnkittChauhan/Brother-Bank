@@ -31,7 +31,7 @@ const loanSchema = new mongoose.Schema({
   },
   interest: {
     type: Number,
-    required: [true, 'Interest rate is required'],
+    required: [true, 'Interest amount is required'],
     min: [0, 'Interest cannot be negative']
   },
   dueAmount: {
@@ -69,7 +69,7 @@ const loanSchema = new mongoose.Schema({
 // auto-calculate dueAmount before saving
 loanSchema.pre('validate', function (next) {
   if (this.givingMoney != null && this.interest != null) {
-    this.dueAmount = this.givingMoney + (this.givingMoney * this.interest / 100);
+    this.dueAmount = this.givingMoney + this.interest;
   }
   next();
 });

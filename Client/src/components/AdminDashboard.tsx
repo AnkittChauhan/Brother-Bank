@@ -47,7 +47,7 @@ const AdminDashboard = () => {
             const { data } = await axios.get(`${API_URL}/api/loans`);
             setLoans(data);
         } catch (error) {
-            setError('Failed to fetch loan applications'+ error);
+            setError('Failed to fetch loan applications' + error);
         } finally {
             setLoading(false);
         }
@@ -104,8 +104,8 @@ const AdminDashboard = () => {
             cancelEdit();
         } catch (err: unknown) {
             console.error('Failed to update financials:', err);
-            const message = axios.isAxiosError(err) && err.response?.data?.error 
-                ? err.response.data.error 
+            const message = axios.isAxiosError(err) && err.response?.data?.error
+                ? err.response.data.error
                 : 'Failed to update financials (make sure backend server was restarted)';
             // alert(message);
             toast.error(message);
@@ -279,7 +279,7 @@ const AdminDashboard = () => {
                                                         className="w-full px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-lg font-bold outline-none"
                                                     />
                                                 ) : (
-                                                    <p className="text-lg font-bold text-indigo-700">{loan.interest}%</p>
+                                                    <p className="text-lg font-bold text-indigo-700">₹{loan.interest.toLocaleString()}</p>
                                                 )}
                                             </div>
                                             <div className="max-md:col-span-2 bg-green-50 rounded-xl p-3 border border-green-100">
@@ -309,32 +309,32 @@ const AdminDashboard = () => {
                                             </button>
                                         </div>
 
-                                            {/* Financials edit controls */}
-                                            <div className="mb-4">
-                                                {editingId === loan._id ? (
-                                                    <div className="flex items-center gap-3">
-                                                        <button
-                                                            onClick={() => saveFinancials(loan._id)}
-                                                            disabled={updatingId === loan._id}
-                                                            className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 shadow-sm disabled:opacity-50"
-                                                        >
-                                                            {updatingId === loan._id ? 'Saving...' : 'Save'}
-                                                        </button>
-                                                        <button
-                                                            onClick={cancelEdit}
-                                                            className="px-4 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <div>
-                                                        <button onClick={() => startEditFinancials(loan)} className="px-3 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 text-sm">
-                                                            Edit Financials
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
+                                        {/* Financials edit controls */}
+                                        <div className="mb-4">
+                                            {editingId === loan._id ? (
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={() => saveFinancials(loan._id)}
+                                                        disabled={updatingId === loan._id}
+                                                        className="px-4 py-2 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 shadow-sm disabled:opacity-50"
+                                                    >
+                                                        {updatingId === loan._id ? 'Saving...' : 'Save'}
+                                                    </button>
+                                                    <button
+                                                        onClick={cancelEdit}
+                                                        className="px-4 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <button onClick={() => startEditFinancials(loan)} className="px-3 py-2 rounded-xl bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 text-sm">
+                                                        Edit Financials
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
 
                                         {/* Actions */}
                                         {loan.status === 'pending' && (
