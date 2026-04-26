@@ -263,11 +263,11 @@ const AdminDashboard = () => {
                                         {/* Money Details */}
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                             <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
-                                                <p className="text-xs text-blue-500 mb-0.5">Loan Amount</p>
+                                                <p className="text-xs text-blue-500 mb-0.5">Loan Amount/ उधार</p>
                                                 <p className="text-lg font-bold text-blue-700">₹{loan.givingMoney.toLocaleString()}</p>
                                             </div>
                                             <div className="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
-                                                <p className="text-xs text-indigo-500 mb-0.5">Interest</p>
+                                                <p className="text-xs text-indigo-500 mb-0.5">Interest/ ब्याज</p>
                                                 {editingId === loan._id ? (
                                                     <input
                                                         type="number"
@@ -282,7 +282,7 @@ const AdminDashboard = () => {
                                                 )}
                                             </div>
                                             <div className="max-md:col-span-2 bg-yellow-50 rounded-xl p-3 border border-yellow-100">
-                                                <p className="text-xs text-yellow-500 mb-0.5">Amount Repaid</p>
+                                                <p className="text-xs text-yellow-500 mb-0.5">Amount Repaid/ चुकाई गई राशि</p>
                                                 {editingId === loan._id ? (
                                                     <input
                                                         type="number"
@@ -297,7 +297,7 @@ const AdminDashboard = () => {
                                                 )}
                                             </div>
                                             <div className="max-md:col-span-2 bg-green-50 rounded-xl p-3 border border-green-100">
-                                                <p className="text-xs text-green-500 mb-0.5">Due Amount</p>
+                                                <p className="text-xs text-green-500 mb-0.5">Due Amount/ बकाया राशि</p>
                                                 <p className="text-lg font-bold text-green-700">₹{(editingId === loan._id ? Math.max(0, loan.givingMoney + Number(draftInterest || 0) - Number(draftAmountRepaid || 0)) : loan.dueAmount).toLocaleString()}</p>
                                             </div>
                                         </div>

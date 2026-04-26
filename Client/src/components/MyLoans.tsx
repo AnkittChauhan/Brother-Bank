@@ -174,19 +174,19 @@ const MyLoans = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                      <p className="text-xs text-blue-600 mb-1">Loan Amount</p>
+                      <p className="text-xs text-blue-600 mb-1">Loan Amount/ उधार</p>
                       <p className="text-xl font-bold text-blue-700">₹{loan.givingMoney.toLocaleString('en-IN')}</p>
                     </div>
                     <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
-                      <p className="text-xs text-indigo-600 mb-1">Interest</p>
+                      <p className="text-xs text-indigo-600 mb-1">Interest/ ब्याज</p>
                       <p className="text-xl font-bold text-indigo-700">₹{loan.interest.toLocaleString('en-IN')}</p>
                     </div>
                     <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
-                      <p className="text-xs text-yellow-600 mb-1">Amount Repaid</p>
+                      <p className="text-xs text-yellow-600 mb-1">Amount Repaid/ चुकाई गई राशि</p>
                       <p className="text-xl font-bold text-yellow-700">₹{(loan.amountRepaid ?? 0).toLocaleString('en-IN')}</p>
                     </div>
                     <div className="bg-green-50 rounded-xl p-4 border border-green-100">
-                      <p className="text-xs text-green-600 mb-1">Due Amount</p>
+                      <p className="text-xs text-green-600 mb-1">Due Amount/ बकाया राशि</p>
                       <p className="text-xl font-bold text-green-700">₹{loan.dueAmount.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
