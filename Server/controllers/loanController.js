@@ -25,6 +25,7 @@ const createLoanApplication = async (req, res) => {
             signature: signatureUpload.secure_url,
             givingMoney: Number(givingMoney),
             interest: Number(interest),
+            amountRepaid: 0, // default to 0
             documentPhoto: documentUpload.secure_url,
             termsAccepted: termsAccepted === 'true' || termsAccepted === true,
             email,
@@ -85,34 +86,35 @@ const getMyLoans = async (req, res) => {
 
 const updateFinancials = async (req, res) => {
     try {
-        const { interest, dueAmount } = req.body;
+        const { interest, amountRepaid } = req.body;
 
-        if (interest == null || dueAmount == null) {
-            return res.status(400).json({ error: 'interest and dueAmount are required' });
+        if (interest == null || amountRepaid == null) {
+            return res.status(400).json({ success: false, message: 'interest and amountRepaid are required' });
         }
 
         const interestNum = Number(interest);
-        const dueAmountNum = Number(dueAmount);
+        const amountRepaidNum = Number(amountRepaid);
 
-        if (Number.isNaN(interestNum) || Number.isNaN(dueAmountNum)) {
-            return res.status(400).json({ error: 'interest and dueAmount must be numeric' });
+        if (Number.isNaN(interestNum) || Number.isNaN(amountRepaidNum)) {
+            return res.status(400).json({ success: false, message: 'interest and amountRepaid must be numeric' });
         }
 
-        if (interestNum < 0) return res.status(400).json({ error: 'interest cannot be negative' });
-        if (dueAmountNum <= 0) return res.status(400).json({ error: 'dueAmount must be greater than 0' });
+        if (interestNum < 0) return res.status(400).json({ success: false, message: 'interest cannot be negative' });
+        if (amountRepaidNum < 0) return res.status(400).json({ success: false, message: 'amountRepaid cannot be negative' });
 
-        const loan = await Loan.findByIdAndUpdate(
-            req.params.id,
-            { interest: interestNum, dueAmount: dueAmountNum },
-            { new: true }
-        );
+        const loan = await Loan.findById(req.params.id);
 
-        if (!loan) return res.status(404).json({ error: 'Loan not found' });
+        if (!loan) return res.status(404).json({ success: false, message: 'Loan not found' });
 
-        res.json({ message: 'Financials updated', loan });
+        loan.interest = interestNum;
+        loan.amountRepaid = amountRepaidNum;
+        // dueAmount is recalculated by schema pre('validate')
+        await loan.save();
+
+        res.json({ success: true, message: 'Financials updated', loan });
     } catch (err) {
         console.error('Financials update error:', err);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 

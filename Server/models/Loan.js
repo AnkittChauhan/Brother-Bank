@@ -36,7 +36,13 @@ const loanSchema = new mongoose.Schema({
   },
   dueAmount: {
     type: Number,
-    required: true
+    required: true,
+     min: [0, 'Due amount cannot be negative']
+  },
+  amountRepaid: {
+    type: Number,
+    default: 0,
+    min: [0, 'Amount repaid cannot be negative']
   },
   documentPhoto: {
     type: String,
@@ -69,7 +75,7 @@ const loanSchema = new mongoose.Schema({
 // auto-calculate dueAmount before saving
 loanSchema.pre('validate', function (next) {
   if (this.givingMoney != null && this.interest != null) {
-    this.dueAmount = this.givingMoney + this.interest;
+    this.dueAmount = this.givingMoney + this.interest - this.amountRepaid;
   }
   next();
 });
