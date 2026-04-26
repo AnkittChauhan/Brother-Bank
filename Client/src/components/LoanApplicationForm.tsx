@@ -6,6 +6,8 @@ import { ArrowLeft, Upload, FileCheck, AlertCircle, Loader2, CheckCircle2 } from
 import { toast } from 'sonner';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const MAX_FILE_SIZE = 7 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
 
 const TERMS_TEXT = {
     en: `By checking this box, I hereby confirm and agree to the following terms and conditions:
@@ -85,10 +87,26 @@ const LoanApplicationForm = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+            const message = 'Only image files (jpeg, jpg, png, webp) are allowed.';
+            setErrors(prev => ({ ...prev, [field]: message }));
+            toast.error(message);
+            return;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+            const message = 'File size exceeds 7MB limit.';
+            setErrors(prev => ({ ...prev, [field]: message }));
+            toast.error(message);
+            return;
+        }
+
         if (field === 'documentPhoto') {
+            if (docPreview) URL.revokeObjectURL(docPreview);
             setDocumentPhoto(file);
             setDocPreview(URL.createObjectURL(file));
         } else {
+            if (sigPreview) URL.revokeObjectURL(sigPreview);
             setSignature(file);
             setSigPreview(URL.createObjectURL(file));
         }
@@ -149,8 +167,10 @@ const LoanApplicationForm = () => {
             });
             toast.success('Application submitted successfully!');
             setSubmitSuccess(true);
-        } catch (err: any) {
-            const msg = err.response?.data?.error || err.response?.data?.details?.join(', ') || 'Failed to submit application';
+        } catch (err: unknown) {
+            const msg = axios.isAxiosError(err)
+                ? err.response?.data?.message || err.response?.data?.error || err.response?.data?.details?.join(', ') || 'Failed to submit application'
+                : 'Failed to submit application';
             setSubmitError(msg);
                 toast.error(msg);
         } finally {
@@ -160,7 +180,7 @@ const LoanApplicationForm = () => {
 
     if (submitSuccess) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+            <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-blue-50 p-4">
                 <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center space-y-6 border border-green-100">
                     <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
                         <CheckCircle2 className="w-10 h-10 text-green-600" />
@@ -170,7 +190,7 @@ const LoanApplicationForm = () => {
                     <p className="text-gray-500">आपका ऋण आवेदन सफलतापूर्वक जमा हो गया है। प्रशासक शीघ्र ही इसकी समीक्षा करेंगे।</p>
                     <button
                         onClick={() => navigate('/')}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-200"
+                        className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-blue-200"
                     >
                         Back to Home
                     </button>
@@ -180,7 +200,7 @@ const LoanApplicationForm = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8 px-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50 py-8 px-4">
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
@@ -308,7 +328,7 @@ const LoanApplicationForm = () => {
                         </div>
 
                         {/* Due Amount */}
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                        <div className="bg-linear-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                             <p className="text-sm text-gray-500 mb-1">Due Amount / देय राशि</p>
                             <p className="text-3xl font-bold text-blue-700">₹{dueAmount.toLocaleString('en-IN')}</p>
                             <p className="text-xs text-gray-400 mt-1">Principal + Interest / मूलधन + ब्याज</p>
@@ -426,7 +446,6 @@ const LoanApplicationForm = () => {
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
                             <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 shrink-0" />
                             <p className="text-sm text-red-700">{submitError}</p>
-                            { toast.error(submitError) }
                         </div>
                     )}
 
@@ -434,7 +453,7 @@ const LoanApplicationForm = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-blue-200 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2 text-lg"
+                        className="w-full bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-blue-200 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2 text-lg"
                     >
                         {isSubmitting ? (
                             <>

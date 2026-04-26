@@ -16,6 +16,7 @@ interface Loan {
     signature: string;
     givingMoney: number;
     interest: number;
+    amountRepaid: number;
     dueAmount: number;
     documentPhoto: string;
     termsAccepted: boolean;
@@ -39,7 +40,7 @@ const AdminDashboard = () => {
     const [updatingId, setUpdatingId] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [draftInterest, setDraftInterest] = useState<string>('');
-    const [draftDueAmount, setDraftDueAmount] = useState<string>('');
+    const [draftAmountRepaid, setDraftAmountRepaid] = useState<string>('');
     const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
     const fetchLoans = async () => {
@@ -78,37 +79,35 @@ const AdminDashboard = () => {
     const startEditFinancials = (loan: Loan) => {
         setEditingId(loan._id);
         setDraftInterest(String(loan.interest));
-        setDraftDueAmount(String(loan.dueAmount));
+        setDraftAmountRepaid(String(loan.amountRepaid ?? 0));
     };
 
     const cancelEdit = () => {
         setEditingId(null);
         setDraftInterest('');
-        setDraftDueAmount('');
+        setDraftAmountRepaid('');
     };
 
     const saveFinancials = async (id: string) => {
         const interestNum = Number(draftInterest);
-        const dueNum = Number(draftDueAmount);
-        if (Number.isNaN(interestNum) || Number.isNaN(dueNum) || interestNum < 0 || dueNum <= 0) {
-            // alert('Please enter valid numeric values: interest >= 0 and due amount > 0');
-            toast.warning('Please enter valid numeric values: interest >= 0 and due amount > 0')
+        const amountRepaidNum = Number(draftAmountRepaid);
+        if (Number.isNaN(interestNum) || Number.isNaN(amountRepaidNum) || interestNum < 0 || amountRepaidNum < 0) {
+            toast.warning('Please enter valid numeric values: interest >= 0 and amount repaid >= 0');
             return;
         }
 
         setUpdatingId(id);
         try {
-            const { data } = await axios.patch(`${API_URL}/api/loans/${id}/financials`, { interest: interestNum, dueAmount: dueNum });
+            const { data } = await axios.patch(`${API_URL}/api/loans/${id}/financials`, { interest: interestNum, amountRepaid: amountRepaidNum });
             // update local list
-            setLoans(prev => prev.map(l => l._id === id ? { ...l, interest: data.loan.interest, dueAmount: data.loan.dueAmount } : l));
+            setLoans(prev => prev.map(l => l._id === id ? { ...l, interest: data.loan.interest, dueAmount: data.loan.dueAmount, amountRepaid: data.loan.amountRepaid } : l));
             cancelEdit();
         } catch (err: unknown) {
             console.error('Failed to update financials:', err);
-            const message = axios.isAxiosError(err) && err.response?.data?.error
-                ? err.response.data.error
+            const message = axios.isAxiosError(err)
+                ? err.response?.data?.message || err.response?.data?.error
                 : 'Failed to update financials (make sure backend server was restarted)';
-            // alert(message);
-            toast.error(message);
+            toast.error(message || 'Failed to update financials (make sure backend server was restarted)');
         } finally {
             setUpdatingId(null);
         }
@@ -262,7 +261,7 @@ const AdminDashboard = () => {
                                         </div>
 
                                         {/* Money Details */}
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                             <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
                                                 <p className="text-xs text-blue-500 mb-0.5">Loan Amount</p>
                                                 <p className="text-lg font-bold text-blue-700">₹{loan.givingMoney.toLocaleString()}</p>
@@ -282,20 +281,24 @@ const AdminDashboard = () => {
                                                     <p className="text-lg font-bold text-indigo-700">₹{loan.interest.toLocaleString()}</p>
                                                 )}
                                             </div>
-                                            <div className="max-md:col-span-2 bg-green-50 rounded-xl p-3 border border-green-100">
-                                                <p className="text-xs text-green-500 mb-0.5">Due Amount</p>
+                                            <div className="max-md:col-span-2 bg-yellow-50 rounded-xl p-3 border border-yellow-100">
+                                                <p className="text-xs text-yellow-500 mb-0.5">Amount Repaid</p>
                                                 {editingId === loan._id ? (
                                                     <input
                                                         type="number"
                                                         step="0.01"
                                                         min="0"
-                                                        value={draftDueAmount}
-                                                        onChange={e => setDraftDueAmount(e.target.value)}
-                                                        className="w-full px-3 py-2 rounded-xl border border-green-200 bg-green-50 text-green-700 text-lg font-bold outline-none"
+                                                        value={draftAmountRepaid}
+                                                        onChange={e => setDraftAmountRepaid(e.target.value)}
+                                                        className="w-full px-3 py-2 rounded-xl border border-yellow-200 bg-yellow-50 text-yellow-700 text-lg font-bold outline-none"
                                                     />
                                                 ) : (
-                                                    <p className="text-lg font-bold text-green-700">₹{loan.dueAmount.toLocaleString()}</p>
+                                                    <p className="text-lg font-bold text-yellow-700">₹{(loan.amountRepaid ?? 0).toLocaleString()}</p>
                                                 )}
+                                            </div>
+                                            <div className="max-md:col-span-2 bg-green-50 rounded-xl p-3 border border-green-100">
+                                                <p className="text-xs text-green-500 mb-0.5">Due Amount</p>
+                                                <p className="text-lg font-bold text-green-700">₹{(editingId === loan._id ? Math.max(0, loan.givingMoney + Number(draftInterest || 0) - Number(draftAmountRepaid || 0)) : loan.dueAmount).toLocaleString()}</p>
                                             </div>
                                         </div>
 
